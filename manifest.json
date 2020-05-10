@@ -1,0 +1,16 @@
+{
+    "manifest_version": 2,
+    "name": "Precios por metro cuadrado",
+    "version": "0.1.0",
+    "description": "Muestra los precios por metro cuadrado en los resultados de www.fincaraiz.com.co",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.fincaraiz.com.co/*"
+            ],
+            "js": [
+                "fincaraiz.js"
+            ]
+        }
+    ]
+}
