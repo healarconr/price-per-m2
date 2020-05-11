@@ -98,45 +98,29 @@
          in="SourceGraphic" />
     </filter>
   </defs>
-  <path
-     id="path4002"
-     style="opacity:.02"
-     d="m1 43v0.25c0 2.216 1.784 4 4 4h38c2.216 0 4-1.784 4-4v-0.25c0 2.216-1.784 4-4 4h-38c-2.216 0-4-1.784-4-4zm0 0.5v0.5c0 2.216 1.784 4 4 4h38c2.216 0 4-1.784 4-4v-0.5c0 2.216-1.784 4-4 4h-38c-2.216 0-4-1.784-4-4z" />
-  <path
-     id="path4004"
-     style="opacity:.05"
-     d="m1 43.25v0.25c0 2.216 1.784 4 4 4h38c2.216 0 4-1.784 4-4v-0.25c0 2.216-1.784 4-4 4h-38c-2.216 0-4-1.784-4-4z" />
-  <path
-     id="path4006"
-     style="opacity:.1"
-     d="m1 43v0.25c0 2.216 1.784 4 4 4h38c2.216 0 4-1.784 4-4v-0.25c0 2.216-1.784 4-4 4h-38c-2.216 0-4-1.784-4-4z" />
-  <rect
-     id="rect4008"
-     style="fill:#17a925;fill-opacity:1"
-     rx="4"
-     height="46"
-     width="46"
-     y="1"
-     x="1" />
-  <path
-     id="path4010"
-     style="opacity:0.9;fill:#86382a;fill-opacity:0.97254902"
-     d="m1 39v4c0 2.216 1.784 4 4 4h38c2.216 0 4-1.784 4-4v-4c0 2.216-1.784 4-4 4h-38c-2.216 0-4-1.784-4-4z" />
-  <text
-     id="text4835"
-     y="32.672001"
-     x="24.165751"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:ubuntu;-inkscape-font-specification:ubuntu;letter-spacing:0px;word-spacing:0px;fill:#fafa01;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter5549)"
-     xml:space="preserve"><tspan
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:32px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:center;text-anchor:middle;fill:#fafa01;fill-opacity:1;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none"
-       y="32.672001"
-       x="24.165751"
-       id="tspan4833">$</tspan></text>
-  <rect
-     y="4.467217"
-     x="6.4672155"
-     height="35.065567"
-     width="35.065567"
-     id="rect4895"
-     style="opacity:0.93999999;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.09599996;stroke-miterlimit:4;stroke-dasharray:3.28799987,1.09599996;stroke-dashoffset:10.37911958;stroke-opacity:0.50188826;paint-order:markers fill stroke" />
+  <g
+     style="display:inline"
+     id="layer1">
+    <rect
+       y="-9.5367432e-07"
+       x="0"
+       height="48"
+       width="48"
+       id="rect4550"
+       style="opacity:1;fill:#41980a;fill-opacity:0.98753119;stroke:none;stroke-width:1.39056551;stroke-miterlimit:4;stroke-dasharray:4.17169656, 1.39056552999999994;stroke-dashoffset:10.37911987;stroke-opacity:0.96946561;paint-order:normal" />
+  </g>
+  <g
+     style="display:inline"
+     id="layer2">
+    <text
+       id="text4835"
+       y="38.229332"
+       x="24.21331"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:ubuntu;-inkscape-font-specification:ubuntu;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter5549)"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:42.66666794px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu Bold';text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none"
+         y="38.229332"
+         x="24.21331"
+         id="tspan4833">$</tspan></text>
+  </g>
 </svg>
