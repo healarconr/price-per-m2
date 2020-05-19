@@ -9,7 +9,7 @@ function main() {
 }
 
 function hasListResults() {
-    return document.querySelector("#divAdverts") != null;
+    return document.querySelector("#divAdverts") !== null;
 }
 
 function showPricesInListResults() {
@@ -17,7 +17,7 @@ function showPricesInListResults() {
     for (const result of results) {
         try {
             let pricePerSquareMeterElement = result.querySelector("div.x-price-per-square-meter");
-            if (pricePerSquareMeterElement) {
+            if (pricePerSquareMeterElement !== null) {
                 pricePerSquareMeterElement.remove();
             }
             const priceNode = result.querySelector(".price");
