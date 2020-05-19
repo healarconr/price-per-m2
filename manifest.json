@@ -16,6 +16,14 @@
             "js": [
                 "fincaraiz.js"
             ]
+        },
+        {
+            "matches": [
+                "https://www.metrocuadrado.com/*"
+            ],
+            "js": [
+                "metrocuadrado.js"
+            ]
         }
     ]
 }
