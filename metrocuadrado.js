@@ -138,32 +138,39 @@ function showPricesInMapResults() {
 }
 
 function showPricesInMapInfoWindows() {
-    const infoWindows = document.querySelectorAll("#resultMapHtmlContainer .gm-style-iw");
+    const infoWindows = getMapResultsNode().querySelectorAll(".gm-style-iw");
     for (const infoWindow of infoWindows) {
-        try {
-            let pricePerSquareMeterElement = infoWindow.querySelector("div.x-price-per-square-meter");
-            if (pricePerSquareMeterElement !== null) {
-                continue;
-            }
-            const priceNode = infoWindow.querySelector("ul li div > b");
-            const price = findPrice(priceNode.textContent);
-            const area = findAreaInInfoWindow(infoWindow.querySelector("ul li div > p").textContent);
-            const pricePerSquareMeter = formatPricePerSquareMeter(price / area);
-            pricePerSquareMeterElement = document.createElement("div");
-            pricePerSquareMeterElement.className = "x-price-per-square-meter";
-            pricePerSquareMeterElement.style.fontSize = "smaller";
-            pricePerSquareMeterElement.style.fontWeight = "normal";
-            pricePerSquareMeterElement.appendChild(document.createTextNode(pricePerSquareMeter));
-            priceNode.appendChild(pricePerSquareMeterElement);
-            let ancestor = pricePerSquareMeterElement.parentNode;
-            while (ancestor !== infoWindow) {
-                if (ancestor.style.maxHeight !== "") {
-                    ancestor.style.maxHeight = ancestor.offsetHeight + pricePerSquareMeterElement.offsetHeight + "px";
+        const results = infoWindow.querySelectorAll(".data-details-id");
+        let increaseMaxHeight = true;
+        for (const result of results) {
+            try {
+                let pricePerSquareMeterElement = result.querySelector("div.x-price-per-square-meter");
+                if (pricePerSquareMeterElement !== null) {
+                    continue;
                 }
-                ancestor = ancestor.parentNode;
+                const priceNode = result.querySelector("ul li div > b");
+                const price = findPrice(priceNode.textContent);
+                const area = findAreaInInfoWindow(result.querySelector("ul li div > p").textContent);
+                const pricePerSquareMeter = formatPricePerSquareMeter(price / area);
+                pricePerSquareMeterElement = document.createElement("div");
+                pricePerSquareMeterElement.className = "x-price-per-square-meter";
+                pricePerSquareMeterElement.style.fontSize = "smaller";
+                pricePerSquareMeterElement.style.fontWeight = "normal";
+                pricePerSquareMeterElement.appendChild(document.createTextNode(pricePerSquareMeter));
+                priceNode.appendChild(pricePerSquareMeterElement);
+                if (increaseMaxHeight) {
+                    let ancestor = pricePerSquareMeterElement.parentNode;
+                    while (ancestor !== infoWindow) {
+                        if (ancestor.style.maxHeight !== "") {
+                            ancestor.style.maxHeight = ancestor.offsetHeight + pricePerSquareMeterElement.offsetHeight + "px";
+                        }
+                        ancestor = ancestor.parentNode;
+                    }
+                    increaseMaxHeight = false;
+                }
+            } catch (e) {
+                // Do nothing
             }
-        } catch (e) {
-            // Do nothing
         }
     }
 }
