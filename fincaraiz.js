@@ -1,29 +1,56 @@
 function main() {
-    if (hasListResults()) {
-        showPricesInListResults();
-        observeListResultsChanges();
+    new MutationObserver(checkResults).observe(document, {
+        "childList": true,
+        "subtree": true
+    });
+    checkResults();
+}
+
+function checkResults() {
+    if (hasListResults() && !isObservingListResults()) {
+        observeListResults();
     }
-    waitUntilMapIsLoaded()
-        .then(observeMapPopUpChanges)
-        .catch(() => { });
+    if (hasMapResults() && !isObservingMapResults()) {
+        observeMapResults();
+    }
 }
 
 function hasListResults() {
-    return document.querySelector("#divAdverts") != null;
+    return getListResultsNode() !== null;
+}
+
+function getListResultsNode() {
+    return document.querySelector("#divAdverts");
+}
+
+function isObservingListResults() {
+    return getListResultsNode().__pricePerSquareElementMutationObserver !== undefined;
+}
+
+function observeListResults() {
+    const observer = new MutationObserver(showPricesInListResults);
+    const node = getListResultsNode();
+    node.__pricePerSquareElementMutationObserver = observer;
+    observer.observe(node, {
+        "childList": true,
+        "subtree": true
+    });
+    showPricesInListResults();
 }
 
 function showPricesInListResults() {
-    const results = document.querySelectorAll("#divAdverts .advert, #divAdverts .AD_OV");
+    const listResultsNode = getListResultsNode();
+    const results = listResultsNode.querySelectorAll(".advert, .AD_OV");
     for (const result of results) {
         try {
             let pricePerSquareMeterElement = result.querySelector("div.x-price-per-square-meter");
-            if (pricePerSquareMeterElement) {
-                pricePerSquareMeterElement.remove();
+            if (pricePerSquareMeterElement !== null) {
+                continue;
             }
             const priceNode = result.querySelector(".price");
             const price = findFirstNumber(priceNode.textContent);
             const area = findFirstNumber(result.querySelector(".surface").textContent)
-            const pricePerSquareMeter = (price / area).toLocaleString("es-CO", { "style": "currency", "currency": "COP", "minimumFractionDigits": 0, "maximumFractionDigits": 0 }) + "/m\u00B2";
+            const pricePerSquareMeter = formatPricePerSquareMeter(price / area);
             pricePerSquareMeterElement = document.createElement("div");
             pricePerSquareMeterElement.className = "x-price-per-square-meter";
             pricePerSquareMeterElement.style.position = "absolute";
@@ -41,42 +68,42 @@ function findFirstNumber(value) {
     return parseFloat(value.match(/[\d.,]+/)[0].replace(/\./g, "").replace(/,/g, "."));
 }
 
-function observeListResultsChanges() {
-    new MutationObserver(showPricesInListResults).observe(document.querySelector("#divAdverts"), { "childList": true })
+function formatPricePerSquareMeter(pricePerSquareMeter) {
+    return pricePerSquareMeter.toLocaleString("es-CO", {
+        "style": "currency",
+        "currency": "COP",
+        "minimumFractionDigits": 0,
+        "maximumFractionDigits": 0
+    }) + "/m\u00B2";
 }
 
-function waitUntilMapIsLoaded() {
-    return new Promise((resolve, reject) => {
-        const startDate = new Date();
-        const maxWaitTimeInMillis = 10000;
-        const checkTimeoutInMillis = 500;
+function hasMapResults() {
+    return getMapResultsNode() !== null;
+}
 
-        function checkIfMapIsLoaded() {
-            const mapPopUpPane = document.querySelector(".leaflet-popup-pane");
-            if (mapPopUpPane !== null) {
-                resolve(mapPopUpPane);
-            } else {
-                const currentDate = new Date();
-                if (currentDate.getTime() - startDate.getTime() < maxWaitTimeInMillis) {
-                    setTimeout(checkIfMapIsLoaded, checkTimeoutInMillis);
-                } else {
-                    reject();
-                }
-            }
-        }
+function getMapResultsNode() {
+    return document.querySelector(".leaflet-popup-pane");
+}
 
-        checkIfMapIsLoaded();
+function isObservingMapResults() {
+    return getMapResultsNode().__pricePerSquareElementMutationObserver !== undefined;
+}
+
+function observeMapResults() {
+    const observer = new MutationObserver(showPricesInMapResults);
+    const node = getMapResultsNode();
+    node.__pricePerSquareElementMutationObserver = observer;
+    observer.observe(node, {
+        "childList": true,
+        "subtree": true
     });
+    showPricesInMapResults();
 }
 
-function observeMapPopUpChanges(mapPopUpPane) {
-    new MutationObserver(showPricesMapPopUp).observe(mapPopUpPane, { "childList": true, "subtree": true });
-}
-
-function showPricesMapPopUp() {
-    const popUpContent = document.querySelector(".leaflet-popup-content");
-    const proyectMap = document.querySelector('li.proyect_Map');
-    if (popUpContent !== null && proyectMap !== null) {
+function showPricesInMapResults() {
+    const mapResultsNode = getMapResultsNode();
+    const proyectMap = mapResultsNode.querySelector('li.proyect_Map');
+    if (proyectMap !== null) {
         try {
             if (proyectMap.querySelector(".x-price-per-square-meter") !== null) {
                 return;
@@ -84,7 +111,7 @@ function showPricesMapPopUp() {
             const priceNode = proyectMap.querySelector(".texto_precio");
             const price = findFirstNumber(priceNode.textContent);
             const area = findFirstNumber(proyectMap.querySelector(".texto_area").textContent);
-            const pricePerSquareMeter = (price / area).toLocaleString("es-CO", { "style": "currency", "currency": "COP", "minimumFractionDigits": 0, "maximumFractionDigits": 0 }) + "/m\u00B2";
+            const pricePerSquareMeter = formatPricePerSquareMeter(price / area);
             const pricePerSquareMeterElement = document.createElement("div");
             pricePerSquareMeterElement.className = "texto_precio x-price-per-square-meter";
             pricePerSquareMeterElement.style.fontSize = "x-small";
@@ -92,7 +119,7 @@ function showPricesMapPopUp() {
             pricePerSquareMeterElement.appendChild(document.createTextNode(pricePerSquareMeter));
             proyectMap.insertBefore(pricePerSquareMeterElement, priceNode.nextSibling);
             let ancestor = pricePerSquareMeterElement.parentNode;
-            while (ancestor !== popUpContent) {
+            while (ancestor !== mapResultsNode) {
                 if (ancestor.style.height !== "") {
                     ancestor.style.height = ancestor.offsetHeight + pricePerSquareMeterElement.offsetHeight + "px";
                 }
