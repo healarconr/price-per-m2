@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Precios por metro cuadrado",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Muestra los precios por metro cuadrado en los resultados de www.fincaraiz.com.co y www.metrocuadrado.com",
     "icons": {
         "16": "icon16.png",
