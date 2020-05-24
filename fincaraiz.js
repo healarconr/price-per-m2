@@ -49,8 +49,10 @@ function showPricesInListResults() {
             }
             const priceNode = result.querySelector(".price");
             const price = findFirstNumber(priceNode.textContent);
-            const area = findFirstNumber(result.querySelector(".surface").textContent)
-            const pricePerSquareMeter = formatPricePerSquareMeter(price / area);
+            const areaNode = result.querySelector(".surface");
+            const area = findFirstNumber(areaNode.textContent);
+            const unit = findUnit(areaNode.textContent);
+            const pricePerSquareMeter = formatPricePerSquareMeter(price / area, unit);
             pricePerSquareMeterElement = document.createElement("div");
             pricePerSquareMeterElement.className = "x-price-per-square-meter";
             pricePerSquareMeterElement.style.position = "absolute";
@@ -68,13 +70,17 @@ function findFirstNumber(value) {
     return parseFloat(value.match(/[\d.,]+/)[0].replace(/\./g, "").replace(/,/g, "."));
 }
 
-function formatPricePerSquareMeter(pricePerSquareMeter) {
+function findUnit(value) {
+    return value.includes("m2") ? "m\u00B2" : "ha";
+}
+
+function formatPricePerSquareMeter(pricePerSquareMeter, unit) {
     return pricePerSquareMeter.toLocaleString("es-CO", {
         "style": "currency",
         "currency": "COP",
         "minimumFractionDigits": 0,
         "maximumFractionDigits": 0
-    }) + "/m\u00B2";
+    }) + "/" + unit;
 }
 
 function hasMapResults() {
@@ -110,8 +116,10 @@ function showPricesInMapResults() {
             }
             const priceNode = proyectMap.querySelector(".texto_precio");
             const price = findFirstNumber(priceNode.textContent);
-            const area = findFirstNumber(proyectMap.querySelector(".texto_area").textContent);
-            const pricePerSquareMeter = formatPricePerSquareMeter(price / area);
+            const areaNode = proyectMap.querySelector(".texto_area");
+            const area = findFirstNumber(areaNode.textContent);
+            const unit = findUnit(areaNode.textContent);
+            const pricePerSquareMeter = formatPricePerSquareMeter(price / area, unit);
             const pricePerSquareMeterElement = document.createElement("div");
             pricePerSquareMeterElement.className = "texto_precio x-price-per-square-meter";
             pricePerSquareMeterElement.style.fontSize = "x-small";
