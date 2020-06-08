@@ -4,6 +4,7 @@ function main() {
         "subtree": true
     });
     checkResults();
+    showPricesInNewProject();
 }
 
 function checkResults() {
@@ -135,6 +136,46 @@ function showPricesInMapResults() {
             }
         } catch (e) {
             // Do nothing
+        }
+    }
+}
+
+function showPricesInNewProject() {
+    const rows = document.querySelectorAll("#typology tbody tr");
+    if (rows.length == 0) {
+        return;
+    }
+
+    const sortedRows = [];
+    let error = false;
+    for (const row of rows) {
+        try {
+            const priceNode = row.querySelector("td:nth-child(7)");
+            const price = findFirstNumber(priceNode.textContent);
+            const areaNode = row.querySelector("td:nth-child(3)");
+            const area = findFirstNumber(areaNode.textContent);
+            const unit = findUnit(areaNode.textContent);
+            const pricePerSquareMeter = price / area;
+            const formattedPricePerSquareMeter = formatPricePerSquareMeter(pricePerSquareMeter, unit);
+            const pricePerSquareMeterElement = document.createElement("div");
+            pricePerSquareMeterElement.className = "x-price-per-square-meter";
+            pricePerSquareMeterElement.style.fontSize = "smaller";
+            pricePerSquareMeterElement.style.fontWeight = "normal";
+            pricePerSquareMeterElement.appendChild(document.createTextNode(formattedPricePerSquareMeter));
+            priceNode.appendChild(pricePerSquareMeterElement);
+            sortedRows.push({
+                "row": row,
+                "pricePerSquareMeter": pricePerSquareMeter
+            })
+        } catch (e) {
+            error = true;
+        }
+    }
+    if (!error) {
+        sortedRows.sort((a, b) => a.pricePerSquareMeter - b.pricePerSquareMeter);
+        const tbody = document.querySelector("#typology tbody");
+        for (const row of sortedRows) {
+            tbody.appendChild(row.row);
         }
     }
 }
