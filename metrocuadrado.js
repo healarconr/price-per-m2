@@ -13,6 +13,9 @@ function checkResults() {
     if (hasMapResults() && !isObservingMapResults()) {
         observeMapResults();
     }
+    if (hasNewProjectResults() && !isObservingNewProjectResults()) {
+        observeNewProjectResults();
+    }
 }
 
 function hasListResults() {
@@ -177,6 +180,72 @@ function showPricesInMapInfoWindows() {
 
 function findAreaInInfoWindow(value) {
     return parseFloat(value.match(/([\d.]+)m2/)[1]);
+}
+
+function hasNewProjectResults() {
+    return getNewProjectResultsNode() !== null;
+}
+
+function getNewProjectResultsNode() {
+    return document.querySelector("#tipos_de_apartamentos");
+}
+
+function isObservingNewProjectResults() {
+    return getNewProjectResultsNode().__pricePerSquareElementMutationObserver !== undefined;
+}
+
+function observeNewProjectResults() {
+    const observer = new MutationObserver(showPricesInNewProject);
+    const node = getNewProjectResultsNode();
+    node.__pricePerSquareElementMutationObserver = observer;
+    observer.observe(node, {
+        "childList": true,
+        "subtree": true
+    });
+    showPricesInNewProject();
+}
+
+function showPricesInNewProject() {
+    const cards = getNewProjectResultsNode().querySelectorAll(".swiper-slide");
+    if (cards.length == 0) {
+        return;
+    }
+
+    const sortedCards = [];
+    let sort = true;
+    for (const card of cards) {
+        try {
+            let pricePerSquareMeterElement = card.querySelector("div.x-price-per-square-meter");
+            if (pricePerSquareMeterElement !== null) {
+                sort = false;
+                continue;
+            }
+            const priceNode = card.querySelector("[data-item='price']");
+            const price = findPrice(priceNode.textContent);
+            const area = findArea(card.querySelector("[data-item='builtArea']").textContent);
+            const pricePerSquareMeter = price / area;
+            const formattedPricePerSquareMeter = formatPricePerSquareMeter(pricePerSquareMeter);
+            pricePerSquareMeterElement = document.createElement("div");
+            pricePerSquareMeterElement.className = "x-price-per-square-meter";
+            pricePerSquareMeterElement.style.fontSize = "smaller";
+            pricePerSquareMeterElement.style.fontWeight = "normal";
+            pricePerSquareMeterElement.appendChild(document.createTextNode(formattedPricePerSquareMeter));
+            priceNode.appendChild(pricePerSquareMeterElement);
+            sortedCards.push({
+                "card": card,
+                "pricePerSquareMeter": pricePerSquareMeter
+            })
+        } catch (e) {
+            sort = false;
+        }
+    }
+    if (sort) {
+        sortedCards.sort((a, b) => a.pricePerSquareMeter - b.pricePerSquareMeter);
+        const wrapper = getNewProjectResultsNode().querySelector(".swiper-wrapper");
+        for (const card of sortedCards) {
+            wrapper.appendChild(card.card);
+        }
+    }
 }
 
 main();
