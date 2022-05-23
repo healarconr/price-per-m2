@@ -21,7 +21,7 @@ function hasListResults() {
 }
 
 function getListResultsNode() {
-    return document.querySelector("#listingContainer");
+    return document.querySelector("#divAdverts");
 }
 
 function isObservingListResults() {
@@ -41,28 +41,26 @@ function observeListResults() {
 
 function showPricesInListResults() {
     const listResultsNode = getListResultsNode();
-    if (listResultsNode === null) {
-        return;
-    }
-    const results = listResultsNode.querySelectorAll("a[href^='/inmueble/']");
+    const results = listResultsNode.querySelectorAll(".advert, .AD_OV");
     for (const result of results) {
         try {
             let pricePerSquareMeterElement = result.querySelector("div.x-price-per-square-meter");
             if (pricePerSquareMeterElement !== null) {
                 continue;
             }
-            const priceNode = result.querySelector(".MuiCardContent-root .MuiGrid-container .MuiGrid-item");
+            const priceNode = result.querySelector(".price");
             const price = findFirstNumber(priceNode.textContent);
-            const areaNode = result.querySelector(".MuiCardContent-root .MuiGrid-container .MuiGrid-item:nth-child(2) span");
+            const areaNode = result.querySelector(".surface");
             const area = findFirstNumber(areaNode.textContent);
             const unit = findUnit(areaNode.textContent);
             const pricePerSquareMeter = formatPricePerSquareMeter(price / area, unit);
             pricePerSquareMeterElement = document.createElement("div");
             pricePerSquareMeterElement.className = "x-price-per-square-meter";
-            pricePerSquareMeterElement.style.float = "right";
-            pricePerSquareMeterElement.style.lineHeight = "24px";
+            pricePerSquareMeterElement.style.position = "absolute";
+            pricePerSquareMeterElement.style.fontSize = "smaller";
+            pricePerSquareMeterElement.style.fontWeight = "normal";
             pricePerSquareMeterElement.appendChild(document.createTextNode(pricePerSquareMeter));
-            priceNode.appendChild(pricePerSquareMeterElement);
+            priceNode.insertBefore(pricePerSquareMeterElement, priceNode.querySelector(".compare_div"));
         } catch (e) {
             // Do nothing
         }
@@ -74,7 +72,7 @@ function findFirstNumber(value) {
 }
 
 function findUnit(value) {
-    return value.includes("m\u00B2") ? "m\u00B2" : "ha";
+    return value.includes("m2") ? "m\u00B2" : "ha";
 }
 
 function formatPricePerSquareMeter(pricePerSquareMeter, unit) {
@@ -91,11 +89,7 @@ function hasMapResults() {
 }
 
 function getMapResultsNode() {
-    mapResult = document.querySelector(".MuiPopover-root .MuiPopover-paper a[href^='/inmueble/']");
-    if (mapResult === null) {
-        return null;
-    }
-    return mapResult.closest(".MuiPopover-root");
+    return document.querySelector(".leaflet-popup-pane");
 }
 
 function isObservingMapResults() {
@@ -115,36 +109,39 @@ function observeMapResults() {
 
 function showPricesInMapResults() {
     const mapResultsNode = getMapResultsNode();
-    if (mapResultsNode === null) {
-        return;
-    }
-    const result = mapResultsNode.querySelector("a[href^='/inmueble/']");
-    if (result === null) {
-        return;
-    }
-    try {
-        if (result.querySelector(".x-price-per-square-meter") !== null) {
-            return;
+    const proyectMap = mapResultsNode.querySelector('li.proyect_Map');
+    if (proyectMap !== null) {
+        try {
+            if (proyectMap.querySelector(".x-price-per-square-meter") !== null) {
+                return;
+            }
+            const priceNode = proyectMap.querySelector(".texto_precio");
+            const price = findFirstNumber(priceNode.textContent);
+            const areaNode = proyectMap.querySelector(".texto_area");
+            const area = findFirstNumber(areaNode.textContent);
+            const unit = findUnit(areaNode.textContent);
+            const pricePerSquareMeter = formatPricePerSquareMeter(price / area, unit);
+            const pricePerSquareMeterElement = document.createElement("div");
+            pricePerSquareMeterElement.className = "texto_precio x-price-per-square-meter";
+            pricePerSquareMeterElement.style.fontSize = "x-small";
+            pricePerSquareMeterElement.style.fontWeight = "normal";
+            pricePerSquareMeterElement.appendChild(document.createTextNode(pricePerSquareMeter));
+            proyectMap.insertBefore(pricePerSquareMeterElement, priceNode.nextSibling);
+            let ancestor = pricePerSquareMeterElement.parentNode;
+            while (ancestor !== mapResultsNode) {
+                if (ancestor.style.height !== "") {
+                    ancestor.style.height = ancestor.offsetHeight + pricePerSquareMeterElement.offsetHeight + "px";
+                }
+                ancestor = ancestor.parentNode;
+            }
+        } catch (e) {
+            // Do nothing
         }
-        const priceNode = result.querySelector(".MuiCardContent-root .MuiGrid-container .MuiGrid-item");
-        const price = findFirstNumber(priceNode.textContent);
-        const areaNode = result.querySelector(".MuiCardContent-root .MuiGrid-container .MuiGrid-item:nth-child(2) span");
-        const area = findFirstNumber(areaNode.textContent);
-        const unit = findUnit(areaNode.textContent);
-        const pricePerSquareMeter = formatPricePerSquareMeter(price / area, unit);
-        pricePerSquareMeterElement = document.createElement("div");
-        pricePerSquareMeterElement.className = "x-price-per-square-meter";
-        pricePerSquareMeterElement.style.float = "right";
-        pricePerSquareMeterElement.style.lineHeight = "24px";
-        pricePerSquareMeterElement.appendChild(document.createTextNode(pricePerSquareMeter));
-        priceNode.appendChild(pricePerSquareMeterElement);
-    } catch (e) {
-        // Do nothing
     }
 }
 
 function showPricesInNewProject() {
-    const rows = document.querySelectorAll("#typologies tbody tr");
+    const rows = document.querySelectorAll("#typology tbody tr");
     if (rows.length == 0) {
         return;
     }
@@ -153,9 +150,9 @@ function showPricesInNewProject() {
     let error = false;
     for (const row of rows) {
         try {
-            const priceNode = row.querySelector("td:nth-child(5) p");
+            const priceNode = row.querySelector("td:nth-child(7)");
             const price = findFirstNumber(priceNode.textContent);
-            const areaNode = row.querySelector("td:nth-child(1)");
+            const areaNode = row.querySelector("td:nth-child(3)");
             const area = findFirstNumber(areaNode.textContent);
             const unit = findUnit(areaNode.textContent);
             const pricePerSquareMeter = price / area;
@@ -163,6 +160,7 @@ function showPricesInNewProject() {
             const pricePerSquareMeterElement = document.createElement("div");
             pricePerSquareMeterElement.className = "x-price-per-square-meter";
             pricePerSquareMeterElement.style.fontSize = "smaller";
+            pricePerSquareMeterElement.style.fontWeight = "normal";
             pricePerSquareMeterElement.appendChild(document.createTextNode(formattedPricePerSquareMeter));
             priceNode.appendChild(pricePerSquareMeterElement);
             sortedRows.push({
@@ -175,7 +173,7 @@ function showPricesInNewProject() {
     }
     if (!error) {
         sortedRows.sort((a, b) => a.pricePerSquareMeter - b.pricePerSquareMeter);
-        const tbody = document.querySelector("#typologies tbody");
+        const tbody = document.querySelector("#typology tbody");
         for (const row of sortedRows) {
             tbody.appendChild(row.row);
         }
